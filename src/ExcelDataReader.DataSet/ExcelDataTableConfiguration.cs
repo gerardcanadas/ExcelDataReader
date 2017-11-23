@@ -26,5 +26,9 @@ namespace ExcelDataReader
         /// Gets or sets a callback to determine whether to include the current row in the DataTable.
         /// </summary>
         public Func<IExcelDataReader, bool> FilterRow { get; set; }
+
+        public int MaxRows { get; set; }
+
+        public int MaxColumns { get; set; }
     }
 }

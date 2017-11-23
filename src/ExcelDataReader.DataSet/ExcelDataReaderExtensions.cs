@@ -72,6 +72,7 @@ namespace ExcelDataReader
             result.ExtendedProperties.Add("visiblestate", self.VisibleState);
             var first = true;
             var emptyRows = 0;
+            bool areRowsLimited = configuration.MaxRows == 0 ? false : true;
             while (self.Read())
             {
                 if (first)
@@ -81,7 +82,10 @@ namespace ExcelDataReader
                         configuration.ReadHeaderRow(self);
                     }
 
-                    for (var i = 0; i < self.FieldCount; i++)
+                    int maxHeaderCols = self.FieldCount;
+                    if (configuration.MaxColumns > 0)
+                        maxHeaderCols = self.FieldCount > configuration.MaxColumns ? configuration.MaxColumns : self.FieldCount;
+                    for (var i = 0; i < maxHeaderCols; i++)
                     {
                         var name = configuration.UseHeaderRow
                             ? Convert.ToString(self.GetValue(i))
@@ -127,13 +131,20 @@ namespace ExcelDataReader
 
                 var row = result.NewRow();
 
-                for (var i = 0; i < self.FieldCount; i++)
+                int maxCols = self.FieldCount;
+                if (configuration.MaxColumns > 0)
+                    maxCols = self.FieldCount > configuration.MaxColumns ? configuration.MaxColumns : self.FieldCount;
+                for (var i = 0; i < maxCols; i++)
                 {
                     var value = self.GetValue(i);
                     row[i] = value;
                 }
-                
+
                 result.Rows.Add(row);
+
+                if (areRowsLimited)
+                    if (result.Rows.Count > configuration.MaxRows)
+                        break;
             }
 
             result.EndLoadData();

@@ -249,7 +249,9 @@ namespace TestApp
                 {
                     ConfigureDataTable = (tableReader) => new ExcelDataTableConfiguration()
                     {
-                        UseHeaderRow = firstRowNamesCheckBox.Checked
+                        UseHeaderRow = firstRowNamesCheckBox.Checked,
+                        MaxColumns = 20,
+                        MaxRows = 25
                     }
                 });
 
